@@ -1,0 +1,10 @@
+[general]
+import = ["~/.config/alacritty/conf.d/theme.toml"]
+
+[font]
+normal.family = "JetBrainsMono Nerd Font Mono Propo"
+#normal.family = "Meslo NF"
+size = 10
+# glyph_offset = { x = 0, y = 5 } 
+
+
