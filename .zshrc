@@ -34,11 +34,18 @@ if [[ -n ${DROPDOWN_TERM:-} ]]; then
   )
   (( $+functions[p10k] )) && p10k reload
 
-  # Keep the prompt pinned to the bottom of the window (output scrolls above).
+  # Pin prompt to the bottom without scrolling command output away:
+  # only pad from the current cursor row down to the last lines.
   autoload -Uz add-zsh-hook
   _dropdown_pin_bottom() {
-    local -i pad=$(( LINES - 3 ))
-    (( pad > 0 )) && printf '\n%.0s' {1..$pad}
+    emulate -L zsh
+    [[ -o interactive && -t 1 && -n $TTY ]] || return
+    local _ _row _col
+    print -rn -- $'\e[6n' >$TTY
+    IFS='[;' read -r -s -d R -t 0.1 _ _row _col <$TTY || return
+    [[ $_row == <-> ]] || return
+    local -i pad=$(( LINES - _row - 2 ))
+    (( pad > 0 )) && printf '\n%.0s' {1..$pad} >$TTY
   }
   add-zsh-hook precmd _dropdown_pin_bottom
 fi
