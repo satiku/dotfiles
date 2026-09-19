@@ -10,3 +10,7 @@ zstyle :compinstall filename '/home/zhud/.zshrc'
 autoload -Uz compinit
 compinit
 # End of lines added by compinstall
+
+# Powerlevel10k (zsh-theme-powerlevel10k from AUR)
+source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
