@@ -21,3 +21,16 @@ compinit
 # Powerlevel10k (zsh-theme-powerlevel10k from AUR)
 source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# Scratchpad terminal (i3 dropdown): transient + two-line prompt
+if [[ -n ${DROPDOWN_TERM:-} ]]; then
+  typeset -g POWERLEVEL9K_TRANSIENT_PROMPT=always
+  typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
+    os_icon
+    dir
+    vcs
+    newline
+    prompt_char
+  )
+  (( $+functions[p10k] )) && p10k reload
+fi
