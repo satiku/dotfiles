@@ -21,3 +21,31 @@ compinit
 # Powerlevel10k (zsh-theme-powerlevel10k from AUR)
 source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# Scratchpad terminal (i3 dropdown): transient + two-line prompt at bottom
+if [[ -n ${DROPDOWN_TERM:-} ]]; then
+  typeset -g POWERLEVEL9K_TRANSIENT_PROMPT=always
+  typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
+    os_icon
+    dir
+    vcs
+    newline
+    prompt_char
+  )
+  (( $+functions[p10k] )) && p10k reload
+
+  # Pin prompt to the bottom without scrolling command output away:
+  # only pad from the current cursor row down to the last lines.
+  autoload -Uz add-zsh-hook
+  _dropdown_pin_bottom() {
+    emulate -L zsh
+    [[ -o interactive && -t 1 && -n $TTY ]] || return
+    local _ _row _col
+    print -rn -- $'\e[6n' >$TTY
+    IFS='[;' read -r -s -d R -t 0.1 _ _row _col <$TTY || return
+    [[ $_row == <-> ]] || return
+    local -i pad=$(( LINES - _row - 2 ))
+    (( pad > 0 )) && printf '\n%.0s' {1..$pad} >$TTY
+  }
+  add-zsh-hook precmd _dropdown_pin_bottom
+fi
