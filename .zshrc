@@ -22,7 +22,7 @@ compinit
 source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-# Scratchpad terminal (i3 dropdown): transient + two-line prompt
+# Scratchpad terminal (i3 dropdown): transient + two-line prompt at bottom
 if [[ -n ${DROPDOWN_TERM:-} ]]; then
   typeset -g POWERLEVEL9K_TRANSIENT_PROMPT=always
   typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
@@ -33,4 +33,12 @@ if [[ -n ${DROPDOWN_TERM:-} ]]; then
     prompt_char
   )
   (( $+functions[p10k] )) && p10k reload
+
+  # Keep the prompt pinned to the bottom of the window (output scrolls above).
+  autoload -Uz add-zsh-hook
+  _dropdown_pin_bottom() {
+    local -i pad=$(( LINES - 3 ))
+    (( pad > 0 )) && printf '\n%.0s' {1..$pad}
+  }
+  add-zsh-hook precmd _dropdown_pin_bottom
 fi
